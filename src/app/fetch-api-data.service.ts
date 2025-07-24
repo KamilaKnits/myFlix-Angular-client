@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { HttpTestingController } from '@angular/common/http/testing';
 
 //Declaring the api url that will provude data for the client app
-const apiUrl = 'https://mymovieflix-a3c1af20a30e.herokuapp.com';
+const apiUrl = 'https://mymovieflix-a3c1af20a30e.herokuapp.com/';
 
 @Injectable({
   providedIn: 'root'
@@ -58,7 +58,7 @@ export class FetchApiDataService {
   public getDirector(title: string): Observable<any> {
     const token = localStorage.getItem('token');
     return this.http
-    .get(apiUrl + `director/${name}`, {
+    .get(apiUrl + `director/${title}`, {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + token,
       }),
