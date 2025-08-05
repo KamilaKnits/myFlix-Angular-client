@@ -1,0 +1,54 @@
+<div>
+  <h2>My Profile</h2>
+</div>
+<!--Updated Info Form-->
+<ng-template>
+  <form (ngSubmit)="updateProfile()">
+  <mat-card>
+    <mat-card-title>Edit Profile</mat-card-title>
+  <mat-card-content>
+    
+      <mat-form-field class="full-width">
+        <input matInput placeholder="Username" [(ngModel)]="user.Username" name="username" required>
+    </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <input matInput placeholder="Email" [(ngModel)]="user.Email" name="email" required>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <input matInput type="date" placeholder="Birthday" [(ngModel)]="user.Birthday" name="birthday">
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="updateProfile()">Save Changes</button>
+    </mat-card-actions> 
+</mat-card>
+</form>
+</ng-template>
+
+<!--favorite movies-->
+<div class="favorite-movies-section" *ngIf="favoriteMovies.length > 0">
+  <h2>Favorite Movies</h2>
+
+  <div class="favorite-movies-grid">
+    <mat-card class="movies" *ngFor="let movie of favoriteMovies">
+      <mat-card-header>
+        <mat-card-title>{{ movie.Title}}</mat-card-title>
+        <mat-card-subtitle>Directed by: {{movie.Director.Name}}</mat-card-subtitle>
+      </mat-card-header>
+      <img class="movie-image" src={{movie.ImagePath}} alt={{movie.Title}}>
+      <mat-card-content>
+        <p>{{ movie.Description}}</p>
+      </mat-card-content>
+
+    </mat-card>
+  </div>
+
+  <div *ngIf="favoriteMovies.length === 0">
+    <p>You haven't added any favorite movies yet.</p>
+  </div>
+
+
+</div>

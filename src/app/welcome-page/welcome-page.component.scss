@@ -1,0 +1,33 @@
+
+.background-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-image: url('../../assets/movie-poster.png');
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+    opacity: 0.6;
+  }
+
+.main-page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    color: black;
+    overflow: hidden;
+  }
+
+  .button-group {
+    display: flex;
+    flex-direction: row;
+    gap: 12px; /* space between buttons */
+    margin-top: 40px; /* space below the title */
+  }
+  

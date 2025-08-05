@@ -1,0 +1,7 @@
+<h2 mat-dialog-title class="dialog-title">{{genre?.Name}} </h2>
+<div class="genre-content" style="padding: 20px;">
+  <p><strong>Genre: </strong>{{genre?.Description}}</p>
+</div>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="closeDialog()" color="primary">close</button>
+</mat-dialog-actions>

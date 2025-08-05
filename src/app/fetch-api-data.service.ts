@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpTestingController } from '@angular/common/http/testing';
 
-//Declaring the api url that will provude data for the client app
+//Declaring the api url that will provide data for the client app
 const apiUrl = 'https://mymovieflix-a3c1af20a30e.herokuapp.com/';
 
 @Injectable({
@@ -79,7 +79,8 @@ export class FetchApiDataService {
 
   public getUser(): Observable<any> {
     const token = localStorage.getItem('token');
-    const username = localStorage.getItem('username');
+    const username = localStorage.getItem('user');
+
     return this.http
     .get(apiUrl + `users/${username}`, {
       headers: new HttpHeaders({
@@ -91,7 +92,7 @@ export class FetchApiDataService {
 
   public addFavoriteMovie(movieId: string): Observable<any> {
     const token = localStorage.getItem('token');
-    const username = localStorage.getItem('username');
+    const username = localStorage.getItem('user');
     return this.http
     .post(apiUrl + `users/${username}/movies/${movieId}`, null, {
       headers: new HttpHeaders({
