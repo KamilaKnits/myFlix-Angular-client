@@ -16,6 +16,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatProgressSpinnerModule, } from '@angular/material/progress-spinner';
 
 
 
@@ -61,6 +63,8 @@ import { DirectorComponent } from './director/director.component';
     MatSnackBarModule,
     MatIconModule,
     MatToolbarModule,
+    MatGridListModule,
+    MatProgressSpinnerModule
     
   ],
   providers: [],

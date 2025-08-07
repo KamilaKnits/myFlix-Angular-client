@@ -3,6 +3,9 @@ import { FetchApiDataService } from '../fetch-api-data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { MovieDetailsComponent } from '../movie-details/movie-details.component';
+import { GenreComponent } from '../genre/genre.component';
+import { DirectorComponent } from '../director/director.component';
 
 @Component({
   selector: 'app-profile-page',
@@ -13,7 +16,9 @@ import { MatDialog } from '@angular/material/dialog';
 export class ProfilePageComponent implements OnInit {
   user: any = {};
   updateUser: any = {};
+  movies: any[] = [];
   favoriteMovies: any[] = [];
+  favoriteMovieIds: string[] = [];
   birthday: string = '';
 
   constructor(
@@ -26,25 +31,53 @@ export class ProfilePageComponent implements OnInit {
     this.loadUserData();
   }
 
-  loadUserData(): void {
-    const username= localStorage.getItem('user');
-    const token = localStorage.getItem('token');
+  getMovies(): void {
+    this.fetchApiData.getAllMovies().subscribe((response: any) => {
+      this.movies = response;
+      console.log(this.movies);
+      
+    },
+      (error) => {
+        console.error('Error fetching movies:', error);
+        this.snackBar.open('Failed to load movies.', 'OK', { duration: 2000 });
+      }
+    );
+  }
 
-    console.log('username from localStorage: ', username);
-    console.log('Using token: ', token);
-    
+  isLoading: boolean = true;
+  showEditForm: boolean = false;
+
+  loadUserData(): void {
+    this.isLoading = true;
+    const username= localStorage.getItem('user');
+    console.log('Raw localStorage user value: ',localStorage.getItem('user'));
+  
     if (!username) {
       console.warn('No username found in localStorage');
       this.router.navigate(['welcome']);
       return;
     }
 
-    this.fetchApiData.getUser().subscribe(
+    this.fetchApiData.getUser(username).subscribe(
       (userData) => {
-        console.log('User data received:', userData);
         this.user = userData;
         this.birthday = new Date(this.user.Birthday).toLocaleDateString();
-        this.favoriteMovies = userData.FavoriteMovies || [];
+        this.favoriteMovieIds = userData.FavoriteMovies || [];
+        
+        this.fetchApiData.getAllMovies().subscribe(
+          (allMovies) => {
+            this.movies = allMovies;
+            this.favoriteMovies = allMovies.filter((movie: any) =>
+            this.favoriteMovieIds.includes(movie._id)
+          );
+            this.isLoading = false;
+          },
+        (error) => {
+          console.error('Failed to fetch movies: ', error)
+          this.snackBar.open('Failed to load movies', 'OK', {
+            duration: 2000});
+            this.isLoading = false;
+        });
 
         localStorage.setItem('user', (userData.Username));
       },
@@ -53,6 +86,7 @@ export class ProfilePageComponent implements OnInit {
         console.log('Error status: ', error.status);
         console.log('Error message: ', error.error);
         this.snackBar.open('Failed to load user data', 'OK', { duration: 2000 });
+        this.isLoading = false;
       }
     );
   }
@@ -63,6 +97,8 @@ export class ProfilePageComponent implements OnInit {
         this.snackBar.open('Profile updated successfully!', 'OK', {
           duration: 2000
         });
+        this.showEditForm = false;
+        this.loadUserData();
 
         localStorage.setItem('user', result.Username);
         this.loadUserData();
@@ -74,6 +110,34 @@ export class ProfilePageComponent implements OnInit {
   );
   }
 
+  isFavorite(movieId: string): boolean {
+    return this.favoriteMovieIds.includes(movieId);
+  }
+
+  toggleFavorite(movieId: string): void {
+    if (this.isFavorite(movieId)) {
+      this.removeFavoriteMovie(movieId);
+    } else {
+      this.addFavoriteMovie(movieId);
+    }
+  }
+
+  addFavoriteMovie(movieId: string): void {
+    this.fetchApiData.addFavoriteMovie(movieId).subscribe(
+      (response) => {
+        console.log('Movie added to Favorites: ', movieId);
+        this.snackBar.open('Movie added to Favorites!', 'OK', { duration: 2000 });
+
+        if (!this.favoriteMovieIds.includes(movieId)) {
+          this.favoriteMovieIds.push(movieId);
+        }
+      },
+      (error) => {
+        console.error('Failed to add movie to favorites:', error);
+        this.snackBar.open('Failed to add to Favorites!', 'OK', { duration: 2000 });
+      }
+    )
+  }
   removeFavoriteMovie(movieId: string): void {
     const username = localStorage.getItem('user');
     if (!username) {
@@ -84,7 +148,7 @@ export class ProfilePageComponent implements OnInit {
     this.fetchApiData.removeMovieFromFavorite(username, movieId).subscribe(
       () => {
         this.snackBar.open('Movie removed from Favorites', 'OK', { duration: 2000 });
-        this.favoriteMovies = this.favoriteMovies.filter(id => id !== movieId);
+        this.favoriteMovies = this.favoriteMovies.filter(movie => movie._id !== movieId);
       },
       (error) => {
         console.error('Error removing movie:', error);
@@ -92,6 +156,31 @@ export class ProfilePageComponent implements OnInit {
       }
     );
   }
+
+  openSynopsisDialog(movie: any): void {
+    this.dialog.open(MovieDetailsComponent, {
+      width: '500px',
+      data: movie,
+    });
+    console.log('Opening description dialog with:', movie)
+  }
+
+  openGenreDialog(genre: any): void { 
+    this.dialog.open(GenreComponent, {
+      width: '500px',
+      data: genre,
+    });
+    console.log('Opening genre dialog with: ', genre);
+  }
+
+  openDirectorDialog(movie: any): void {
+        this.dialog.open(DirectorComponent, {
+          width: '500px',
+          data: movie.Director,
+        });
+        console.log('Director data:', movie.Director);
+      }
+
 
 
   deleteAccount(): void {

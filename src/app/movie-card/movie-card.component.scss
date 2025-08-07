@@ -1,11 +1,50 @@
-.movie-image {
-    height: 280px; 
-    width: 280px;
+html, body{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    
+}
+ .app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    
+ }
+
+.app-toolbar {
+    flex-shrink: 0;
 }
 
 .item-spacer {
     flex: 1 1 auto;
   }
 
- 
-  
+.movie-container {
+    padding: 50px;
+    
+}
+
+.movie-grid {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+.movie-card {
+    min-height: 100px;
+    width: 300px;
+    flex: 1 1 300px;
+}
+
+.movie-image {
+    height: 280px;
+    width: 280px;
+    object-fit: scale-down
+}
+
+.favorite-icon {
+    color: red;
+}
