@@ -1,0 +1,84 @@
+<mat-toolbar color="primary" class="app-toolbar">
+  <span>Knitflix</span>
+  <span class="item-spacer"></span>
+  <button mat-button routerLink="/profile">Profile</button>
+  <button mat-button routerLink="/movies">All Movies</button>
+</mat-toolbar>
+
+<p *ngIf="!user">Loading Profile data...</p>
+
+<mat-spinner *ngIf="isLoading" diameter="50"></mat-spinner>
+
+<div class="profile-header" *ngIf="user">
+  <h2>{{ user.Username}}'s Profile</h2>
+  <p>Birthday: {{birthday}}</p>
+  <button mat-raised-button color="accent" (click)="showEditForm = !showEditForm">
+    {{ showEditForm ? 'Cancel' : 'Edit Profile'}}
+  </button>
+</div>
+
+<!--Updated Info Form-->
+<form *ngIf="showEditForm" (ngSubmit)="updateProfile()" class="edit-form">
+
+  <mat-card>
+    <mat-card-title>Edit Profile</mat-card-title>
+    <mat-card-content>
+
+      <mat-form-field class="full-width">
+        <input matInput placeholder="Username" [(ngModel)]="user.Username" name="username" required>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <input matInput placeholder="Email" [(ngModel)]="user.Email" name="email" required>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <input matInput type="date" placeholder="Birthday" [(ngModel)]="user.Birthday" name="birthday">
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="updateProfile()">Save Changes</button>
+    </mat-card-actions>
+  </mat-card>
+</form>
+
+
+<!--favorite movies-->
+<div class="favorite-movies-section" *ngIf="favoriteMovies.length > 0">
+  <h2>Favorite Movies</h2>
+
+  <div class="favorite-movies-grid">
+    <mat-card class="movies" *ngFor="let movie of favoriteMovies">
+      <mat-card-header>
+        <mat-card-title>{{ movie.Title}}</mat-card-title>
+        <mat-card-subtitle>Directed by: {{movie.Director.Name}}</mat-card-subtitle>
+      </mat-card-header>
+      <img class="movie-image" src={{movie.ImagePath}} alt={{movie.Title}}>
+      <mat-card-content>
+        <p><strong>Description:</strong> {{movie?.Description}}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="openGenreDialog(movie.Genre)">
+          Genre
+        </button>
+        <button mat-button color="primary" (click)="openDirectorDialog(movie)">
+          Director
+        </button>
+        <button mat-button color="primary" (click)="openSynopsisDialog(movie)">
+          Synopsis
+        </button>
+        <mat-icon style="cursor: pointer;" (click)="toggleFavorite(movie._id)"
+          [title]="isFavorite(movie._id) ? 'Remove from Favorite' : 'Add to Favorite'"
+          [ngClass]="{ 'favorite-icon' : isFavorite(movie._id) }">
+          {{ isFavorite(movie._id) ? 'favorite' : 'favorite_border' }}
+        </mat-icon>
+      </mat-card-actions>
+
+    </mat-card>
+  </div>
+</div>
+
+<div *ngIf="!favoriteMovies.length && !isLoading">
+  <p>You haven't added any favorite movies yet. Go explore and add some!</p>
+</div>

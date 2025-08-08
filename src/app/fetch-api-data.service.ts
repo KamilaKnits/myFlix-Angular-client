@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpTestingController } from '@angular/common/http/testing';
 
-//Declaring the api url that will provude data for the client app
+//Declaring the api url that will provide data for the client app
 const apiUrl = 'https://mymovieflix-a3c1af20a30e.herokuapp.com/';
 
 @Injectable({
@@ -77,21 +77,23 @@ export class FetchApiDataService {
     .pipe(map(this.extractResponseData), catchError(this.handleError));
   }
 
-  public getUser(): Observable<any> {
+  public getUser(username: string): Observable<any> {
     const token = localStorage.getItem('token');
-    const username = localStorage.getItem('username');
+    // const username = localStorage.getItem('user');
+    console.log('Requesting user data from:', apiUrl + `users/${username}`);
     return this.http
     .get(apiUrl + `users/${username}`, {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + token,
       }),
+      
     })
     .pipe(map(this.extractResponseData), catchError(this.handleError));
   }
 
   public addFavoriteMovie(movieId: string): Observable<any> {
     const token = localStorage.getItem('token');
-    const username = localStorage.getItem('username');
+    const username = localStorage.getItem('user');
     return this.http
     .post(apiUrl + `users/${username}/movies/${movieId}`, null, {
       headers: new HttpHeaders({
@@ -126,11 +128,11 @@ export class FetchApiDataService {
   public removeMovieFromFavorite(username: string, movieId: string): Observable<any> {
     const token = localStorage.getItem('token');
     return this.http
-    .delete(apiUrl + `users/${username}/favorites/${movieId}`, {
+    .delete(apiUrl + `users/${username}/movies/${movieId}`, {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + token,
-      }),
-    })
+    }),
+  })
     .pipe(map(this.extractResponseData), catchError(this.handleError));
   }
 

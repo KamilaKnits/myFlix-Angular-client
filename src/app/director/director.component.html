@@ -1,0 +1,12 @@
+<h2 mat-dialog-title class="dialog-title">{{director?.Name}} </h2>
+<div class="director-content" style="padding: 20px;">
+  <p><strong>Bio:</strong> {{director?.Bio}}</p>
+  <p><strong>Born:</strong> {{director?.Birth}}</p>
+ <h4>Movies Directed:</h4> 
+ <ul>
+  <li *ngFor="let movie of directedMovies">{{movie.Title}}</li>
+ </ul>
+</div>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="closeDialog()" color="primary">close</button>
+</mat-dialog-actions>
