@@ -4,6 +4,13 @@ import { FetchApiDataService } from '../fetch-api-data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { C } from '@angular/cdk/keycodes';
 
+/**
+ * This component allows the user to register for the account. Dialog opens to 
+ * collected Username,Password, Email and Birthday from the user and the account
+ * is created. 
+ */
+
+
 @Component({
   selector: 'app-user-registration-form',
   standalone: false,
@@ -21,6 +28,10 @@ export class UserRegistrationFormComponent implements OnInit {
   ngOnInit(): void {
 
   }
+
+  /**
+   * Creates the account for user
+   */
 
   registerUser(): void {
     console.log('Register button clicked');

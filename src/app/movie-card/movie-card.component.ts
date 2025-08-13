@@ -7,6 +7,11 @@ import { MovieDetailsComponent } from '../movie-details/movie-details.component'
 import { GenreComponent } from '../genre/genre.component';
 import { DirectorComponent } from '../director/director.component';
 
+/**
+ * This component is the landing page once the user logs into their account. 
+ * Users can view movies, add and remove movies from their favorite list. 
+ * Each movie has a dialog for genre, director and description.
+ */
 
 @Component({
   selector: 'app-movie-card',
@@ -33,6 +38,10 @@ export class MovieCardComponent implements OnInit {
     this.getMovies();
   }
 
+  /**
+   * Fetches all movies from the database
+   */
+
   getMovies(): void {
     this.fetchApiData.getAllMovies().subscribe((response: any) => {
       this.movies = response;
@@ -46,6 +55,10 @@ export class MovieCardComponent implements OnInit {
     );
   }
 
+  /**
+   * Fetches all movies in the genre selected 
+   * @param genreName string
+   */
   getGenre(genreName: string): void {
     this.fetchApiData.getGenre(genreName).subscribe(
       (response: any) => {
@@ -59,6 +72,10 @@ export class MovieCardComponent implements OnInit {
     );
   }
 
+  /**
+   * Fetches movies by director
+   * @param directorName 
+   */
   getDirector(directorName: string): void {
     this.fetchApiData.getDirector(directorName).subscribe(
       (response: any) => {
@@ -71,6 +88,10 @@ export class MovieCardComponent implements OnInit {
       }
     );
   }
+  /**
+   * opens dialog to show more information about the movie; description
+   * @param movie 
+   */
 
   openSynopsisDialog(movie: any): void {
     this.dialog.open(MovieDetailsComponent, {
@@ -80,6 +101,10 @@ export class MovieCardComponent implements OnInit {
     console.log('Opening description dialog with:', movie)
   }
 
+  /**
+   * opens dialog to show more information about the genre
+   * @param genre 
+   */
   openGenreDialog(genre: any): void { 
     this.dialog.open(GenreComponent, {
       width: '500px',
@@ -88,6 +113,10 @@ export class MovieCardComponent implements OnInit {
     console.log('Opening genre dialog with: ', genre);
   }
 
+  /**
+   * opens dialog to show more information about the director
+   * @param movie 
+   */
   openDirectorDialog(movie: any): void {
         this.dialog.open(DirectorComponent, {
           width: '500px',
@@ -97,13 +126,20 @@ export class MovieCardComponent implements OnInit {
       }
 
   
-
-  
-
+/**
+ * checks to see if the movie is in the favorite list
+ * @param movieId - the id of movie
+ * @returns {boolean} returns true or false if the movie is favorited
+ */
   isFavorite(movieId: string): boolean {
     return this.favoriteMovieIds.includes(movieId);
   }
 
+  /**
+   * checks to see if the movie is in the favorite list and then 
+   * adds or removes the movie
+   * @param movieId - the id of movie
+   */
   toggleFavorite(movieId: string): void {
     if (this.isFavorite(movieId)) {
       this.removeFavoriteMovie(movieId);
@@ -112,6 +148,10 @@ export class MovieCardComponent implements OnInit {
     }
   }
 
+  /**
+   * adds movie to the favorite list
+   * @param movieId - the id ofthe movie
+   */
   addFavoriteMovie(movieId: string): void {
     this.fetchApiData.addFavoriteMovie(movieId).subscribe(
       (response) => {
@@ -128,6 +168,12 @@ export class MovieCardComponent implements OnInit {
       }
     )
   }
+
+  /**
+   * removes movie from favorite list
+   * @param movieId - the id of movie to remove
+   * @returns -removes movie from favorite list 
+   */
 
   removeFavoriteMovie(movieId: string): void {
     const username = localStorage.getItem('user');

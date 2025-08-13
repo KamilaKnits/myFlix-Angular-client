@@ -7,6 +7,11 @@ import { MovieDetailsComponent } from '../movie-details/movie-details.component'
 import { GenreComponent } from '../genre/genre.component';
 import { DirectorComponent } from '../director/director.component';
 
+/**
+ * This component is responsible for displaying the user's profile page. 
+ * The user can update their personal details and view their favorite movies
+ * and make changes to their lists.
+ */
 @Component({
   selector: 'app-profile-page',
   standalone: false,
@@ -31,11 +36,15 @@ export class ProfilePageComponent implements OnInit {
     this.loadUserData();
   }
 
+  /**
+     * Fetches all movies from the database
+     */
+
   getMovies(): void {
     this.fetchApiData.getAllMovies().subscribe((response: any) => {
       this.movies = response;
       console.log(this.movies);
-      
+
     },
       (error) => {
         console.error('Error fetching movies:', error);
@@ -47,11 +56,16 @@ export class ProfilePageComponent implements OnInit {
   isLoading: boolean = true;
   showEditForm: boolean = false;
 
+  /**
+   * Fetches user data from API after being authenticated
+   * @returns user data such as favorite movies, birthdate
+   */
+
   loadUserData(): void {
     this.isLoading = true;
-    const username= localStorage.getItem('user');
-    console.log('Raw localStorage user value: ',localStorage.getItem('user'));
-  
+    const username = localStorage.getItem('user');
+    console.log('Raw localStorage user value: ', localStorage.getItem('user'));
+
     if (!username) {
       console.warn('No username found in localStorage');
       this.router.navigate(['welcome']);
@@ -63,21 +77,22 @@ export class ProfilePageComponent implements OnInit {
         this.user = userData;
         this.birthday = new Date(this.user.Birthday).toLocaleDateString();
         this.favoriteMovieIds = userData.FavoriteMovies || [];
-        
+
         this.fetchApiData.getAllMovies().subscribe(
           (allMovies) => {
             this.movies = allMovies;
             this.favoriteMovies = allMovies.filter((movie: any) =>
-            this.favoriteMovieIds.includes(movie._id)
-          );
+              this.favoriteMovieIds.includes(movie._id)
+            );
             this.isLoading = false;
           },
-        (error) => {
-          console.error('Failed to fetch movies: ', error)
-          this.snackBar.open('Failed to load movies', 'OK', {
-            duration: 2000});
+          (error) => {
+            console.error('Failed to fetch movies: ', error)
+            this.snackBar.open('Failed to load movies', 'OK', {
+              duration: 2000
+            });
             this.isLoading = false;
-        });
+          });
 
         localStorage.setItem('user', (userData.Username));
       },
@@ -90,6 +105,11 @@ export class ProfilePageComponent implements OnInit {
       }
     );
   }
+
+  /**
+   * Updates user profile, edit form appears for the user to make changes
+   * 
+   */
 
   updateProfile(): void {
     this.fetchApiData.editUser(this.user.Username, this.user).subscribe(
@@ -107,12 +127,24 @@ export class ProfilePageComponent implements OnInit {
         console.error('Error updating user details:', error);
         this.snackBar.open('Failed to update user data.', 'OK', { duration: 2000 });
       }
-  );
+    );
   }
+
+  /**
+ * Checks to see if the movie is in the favorite list
+ * @param movieId - the id of movie
+ * @returns {boolean} returns true or false if the movie is favorited
+ */
 
   isFavorite(movieId: string): boolean {
     return this.favoriteMovieIds.includes(movieId);
   }
+
+  /**
+   * Checks to see if the movie is in the favorite list and then 
+   * adds or removes the movie
+   * @param movieId - the id of movie
+   */
 
   toggleFavorite(movieId: string): void {
     if (this.isFavorite(movieId)) {
@@ -122,10 +154,15 @@ export class ProfilePageComponent implements OnInit {
     }
   }
 
+  /**
+   * Adds movie to the favorite list
+   * @param movieId - the id ofthe movie
+   */
+
   addFavoriteMovie(movieId: string): void {
     this.fetchApiData.addFavoriteMovie(movieId).subscribe(
       (response) => {
-        
+
         if (!this.favoriteMovieIds.includes(movieId)) {
           this.favoriteMovieIds.push(movieId);
         }
@@ -138,6 +175,13 @@ export class ProfilePageComponent implements OnInit {
       }
     )
   }
+
+  /**
+     * Removes movie from favorite list
+     * @param movieId - the id of movie to remove
+     * @returns -removes movie from favorite list 
+     */
+
   removeFavoriteMovie(movieId: string): void {
     const username = localStorage.getItem('user');
     if (!username) {
@@ -157,6 +201,11 @@ export class ProfilePageComponent implements OnInit {
     );
   }
 
+  /**
+    * Opens dialog to show more information about the movie; description
+    * @param movie 
+    */
+
   openSynopsisDialog(movie: any): void {
     this.dialog.open(MovieDetailsComponent, {
       width: '500px',
@@ -165,7 +214,12 @@ export class ProfilePageComponent implements OnInit {
     console.log('Opening description dialog with:', movie)
   }
 
-  openGenreDialog(genre: any): void { 
+  /**
+     * Opens dialog to show more information about the genre
+     * @param genre 
+     */
+
+  openGenreDialog(genre: any): void {
     this.dialog.open(GenreComponent, {
       width: '500px',
       data: genre,
@@ -173,15 +227,23 @@ export class ProfilePageComponent implements OnInit {
     console.log('Opening genre dialog with: ', genre);
   }
 
+  /**
+   * opens dialog to show more information about the director
+   * @param movie 
+   */
+
   openDirectorDialog(movie: any): void {
-        this.dialog.open(DirectorComponent, {
-          width: '500px',
-          data: movie.Director,
-        });
-        console.log('Director data:', movie.Director);
-      }
+    this.dialog.open(DirectorComponent, {
+      width: '500px',
+      data: movie.Director,
+    });
+    console.log('Director data:', movie.Director);
+  }
 
-
+  /**
+   * Deletes users account
+   * @returns message if account was deleted successfully
+   */
 
   deleteAccount(): void {
     const username = localStorage.getItem('user');
@@ -189,7 +251,7 @@ export class ProfilePageComponent implements OnInit {
       console.error('No user found');
       return;
     }
-    
+
     this.fetchApiData.deleteUser(username).subscribe(
       (resp: any) => {
         console.log('User deleted:', resp)
@@ -206,7 +268,7 @@ export class ProfilePageComponent implements OnInit {
 
   logout(): void {
     localStorage.clear();
-    this.snackBar.open('Logged out successfully!', 'OK', { duration: 2000});
+    this.snackBar.open('Logged out successfully!', 'OK', { duration: 2000 });
     this.router.navigate(['welcome']);
   }
 
